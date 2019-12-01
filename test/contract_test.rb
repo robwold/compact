@@ -12,10 +12,12 @@ class ContractTest < MiniTest::Test
   end
 
   def test_adding_a_spec
-    skip
     @subject.add_spec(method: :add,
                       args: [1,2],
                       returns: 3)
-
+    spec = @subject.specs[:add]
+    assert_equal Spec.new(method: :add,
+                          args: [1,2],
+                          returns: 3), spec
   end
 end

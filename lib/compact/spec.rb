@@ -1,8 +1,8 @@
 class Spec
-
-  def initialize(method:,args:, returns:)
-    @method = method,
-    @args = args,
+  attr_reader :method, :args, :returns
+  def initialize(args:, method:, returns:)
+    @method = method
+    @args = args
     @returns = returns
     @verified = false
   end

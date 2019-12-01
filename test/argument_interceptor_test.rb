@@ -1,14 +1,9 @@
 require 'minitest/autorun'
 require 'compact/argument_interceptor.rb'
+require_relative './dumb_object'
 
 
 class ArgumentInterceptorTest < MiniTest::Test
-
-  class DumbObject
-    def add(first_arg, second_arg)
-      first_arg + second_arg
-    end
-  end
 
   def setup
     dumb_object = DumbObject.new

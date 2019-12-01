@@ -10,4 +10,8 @@ class Contract
   def add_spec(method:, args:,  returns:)
     @specs[method] = Spec.new(method: method, args: args,  returns: returns)
   end
+
+  def unverified_specs
+    @specs.values.flatten.reject{|spec| spec.verified?}
+  end
 end

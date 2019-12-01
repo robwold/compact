@@ -17,12 +17,12 @@ class ContractTest < MiniTest::Test
   end
 
   def test_creation
-    assert_equal({}, new_contract.specs)
+    assert_equal([], new_contract.specs)
   end
 
   def test_adding_a_spec
     contract = contract_with_spec
-    spec = contract.specs[:add]
+    spec = contract.specs.first
     assert_equal Spec.new(method: :add,
                           args: [1,2],
                           returns: 3), spec

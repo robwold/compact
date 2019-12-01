@@ -4,14 +4,14 @@ class Contract
 
   def initialize(name)
     @name = name
-    @specs = {}
+    @specs = []
   end
 
-  def add_spec(method:, args:,  returns:)
-    @specs[method] = Spec.new(method: method, args: args,  returns: returns)
+  def add_spec(method:, args:, returns:)
+    @specs.push Spec.new(method: method, args: args, returns: returns)
   end
 
   def unverified_specs
-    @specs.values.flatten.reject{|spec| spec.verified?}
+    @specs.reject{|spec| spec.verified?}
   end
 end

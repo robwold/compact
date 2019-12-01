@@ -27,5 +27,8 @@ class ContractTest < MiniTest::Test
                           args: [1,2],
                           returns: 3), spec
     assert_equal [spec], contract.unverified_specs
+    assert contract.verified_specs.empty?
   end
+
+
 end

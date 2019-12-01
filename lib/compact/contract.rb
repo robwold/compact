@@ -12,10 +12,10 @@ class Contract
   end
 
   def unverified_specs
-    @specs.reject{|spec| spec.verified?}
+    @specs.reject(&:verified?)
   end
 
   def verified_specs
-    @specs.select{|spec| spec.verified? }
+    @specs.select(&:verified?)
   end
 end

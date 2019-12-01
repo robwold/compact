@@ -8,7 +8,8 @@ class ArgumentInterceptor < SimpleDelegator
 
   def method_missing(method, *args, &block)
     @invocations[method] ||= []
-    @invocations[method].push args
-    super
+    result = super
+    @invocations[method].push({args: args, result: result})
+    result
   end
 end

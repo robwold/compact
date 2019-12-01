@@ -1,4 +1,6 @@
 require_relative './spec'
+require_relative './argument_interceptor'
+
 class Contract
   attr_reader :specs
 
@@ -18,4 +20,20 @@ class Contract
   def verified_specs
     @specs.select(&:verified?)
   end
+
+  def verify(collaborator)
+    interceptor = ArgumentInterceptor.new(collaborator)
+    yield(interceptor)
+
+    @specs.each(&:verify)
+  end
+  #
+  # private
+  # def spec_matching(interceptor)
+  #   @specs.find {|spec| matches?(spec, interceptor) }
+  # end
+  #
+  # def matches?(spec, interceptor)
+  #   spec.method ==
+  # end
 end

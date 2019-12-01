@@ -11,6 +11,10 @@ class Spec
     @verified
   end
 
+  def verify
+    @verified = true
+  end
+
   def == other_spec
     same_args = args == other_spec.args
     same_method = method == other_spec.method

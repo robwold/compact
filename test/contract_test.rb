@@ -30,5 +30,33 @@ class ContractTest < MiniTest::Test
     assert contract.verified_specs.empty?
   end
 
+  def test_passing_contract_verification
+    contract = contract_with_spec
+    collaborator = DumbObject.new
+    assert contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert contract.unverified_specs.empty?
+    refute_nil contract.verified_specs.first
+  end
+
+  def test_failing_contract_verification
+    skip
+    contract = contract_with_spec
+    bad_collaborator = Object.new
+    def bad_collaborator.add(x,y)
+      -1
+    end
+    refute contract.verify(bad_collaborator){|obj| obj.add(1,2)}
+    assert contract.verified_specs.empty?
+    refute_nil contract.unverified_specs.first
+  end
+
+  def test_invalid_contract_verification
+    skip
+    contract = contract_with_spec
+    collaborator = DumbObject.new
+    refute contract.verify(collaborator){|obj| obj.add(2,3)}
+    assert contract.verified_specs.empty?
+    refute_nil contract.unverified_specs.first
+  end
 
 end

@@ -15,10 +15,10 @@ class ArgumentInterceptorTest < MiniTest::Test
     assert_equal expected, @subject.add(1, 2)
   end
 
-  def test_registers_args
+  def test_registers_args_and_results
     @subject.add(1, 2)
     @subject.add(3, 4)
-    expected = {add: [[1, 2], [3, 4]]}
+    expected = {add: [ {args: [1, 2], result: 3},{args:[3, 4], result: 7}]}
     assert_equal expected, @subject.invocations
   end
 end

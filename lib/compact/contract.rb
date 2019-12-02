@@ -37,6 +37,6 @@ class Contract
   def matches?(spec, interceptor)
     invocations = interceptor.invocations[spec.method]
     return false unless invocations
-    invocations.any?{|invocation| invocation[:args] == spec.args && invocation[:result] == spec.returns }
+    invocations.any?{|invocation| invocation[:args] == spec.args && invocation[:returns] == spec.returns }
   end
 end

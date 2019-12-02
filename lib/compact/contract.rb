@@ -24,16 +24,19 @@ class Contract
   def verify(collaborator)
     interceptor = ArgumentInterceptor.new(collaborator)
     yield(interceptor)
-
-    @specs.each(&:verify)
+    spec = spec_matching?(interceptor)
+    spec.verify if spec
+    !spec.nil?
   end
-  #
-  # private
-  # def spec_matching(interceptor)
-  #   @specs.find {|spec| matches?(spec, interceptor) }
-  # end
-  #
-  # def matches?(spec, interceptor)
-  #   spec.method ==
-  # end
+
+  private
+  def spec_matching?(interceptor)
+    @specs.find{|spec| matches?(spec, interceptor) }
+  end
+
+  def matches?(spec, interceptor)
+    invocations = interceptor.invocations[spec.method]
+    return false unless invocations
+    invocations.any?{|invocation| invocation[:args] == spec.args && invocation[:result] == spec.returns }
+  end
 end

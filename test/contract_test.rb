@@ -39,7 +39,6 @@ class ContractTest < MiniTest::Test
   end
 
   def test_failing_contract_verification
-    skip
     contract = contract_with_spec
     bad_collaborator = Object.new
     def bad_collaborator.add(x,y)
@@ -51,7 +50,6 @@ class ContractTest < MiniTest::Test
   end
 
   def test_invalid_contract_verification
-    skip
     contract = contract_with_spec
     collaborator = DumbObject.new
     refute contract.verify(collaborator){|obj| obj.add(2,3)}

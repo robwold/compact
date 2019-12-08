@@ -30,17 +30,29 @@ module Compact
     def verify(collaborator)
       interceptor = ArgumentInterceptor.new(collaborator)
       yield(interceptor)
-      possible_matches = specs_matching_invocation(interceptor)
+      compare_to_specs interceptor.invocations
+    end
 
+    private
+    def specs_matching(invocations)
+      @specs.select {|spec| matches_invocation?(spec, invocations) }
+    end
+
+    def matches_invocation?(spec, invocations)
+      invocations.any?{|invocation| invocation.matches_call(spec.invocation)}
+    end
+
+    def matches_exactly?(spec, invocations)
+      invocations.any?{|invocation| invocation == spec.invocation }
+    end
+
+    def compare_to_specs(invocations)
+      possible_matches = specs_matching(invocations)
       if possible_matches.empty?
-        interceptor.invocations.each do |invocation|
-            add_spec(invocation: invocation,
-                     verified: true,
-                     pending: true)
-        end
+        add_pending_specs(invocations)
         return PENDING
       end
-      verified_spec = possible_matches.find{|spec| matches_exactly?(spec, interceptor) }
+      verified_spec = possible_matches.find{|spec| matches_exactly?(spec, invocations) }
       if verified_spec
         verified_spec.verify
         VERIFIED
@@ -49,19 +61,12 @@ module Compact
       end
     end
 
-    private
-    def specs_matching_invocation(interceptor)
-      @specs.select {|spec| matches_invocation?(spec, interceptor) }
-    end
-
-    def matches_invocation?(spec, interceptor)
-      invocations = interceptor.invocations_for_method(spec.method)
-      invocations&.any?{|invocation| invocation.args == spec.args  }
-    end
-
-    def matches_exactly?(spec, interceptor)
-      invocations = interceptor.invocations_for_method(spec.method)
-      invocations&.any?{|invocation| invocation == spec.invocation }
+    def add_pending_specs(invocations)
+      invocations.each do |invocation|
+        add_spec(invocation: invocation,
+                 verified: true,
+                 pending: true)
+      end
     end
   end
 end

@@ -20,18 +20,6 @@ module Compact
       @pending
     end
 
-    def method
-      @invocation.method
-    end
-
-    def args
-      @invocation.args
-    end
-
-    def returns
-      @invocation.returns
-    end
-
     def == other_spec
       invocation == other_spec.invocation
     end

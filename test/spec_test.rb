@@ -8,8 +8,6 @@ class SpecTest < MiniTest::Test
                                 returns: [2])
     subject = Spec.new(invocation: invocation)
     refute subject.verified?
-    # assert_equal :foo, subject.method
-    # assert_equal [1], subject.args
-    # assert_equal [2], subject.returns
+    refute subject.pending?
   end
 end

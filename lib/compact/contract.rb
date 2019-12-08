@@ -9,8 +9,8 @@ module Compact
       @specs = []
     end
 
-    def add_spec(method:, args:, returns:)
-      @specs.push Spec.new(method: method, args: args, returns: returns)
+    def add_spec(method:, args:, returns:, verified: false, pending: false)
+      @specs.push Spec.new(method: method, args: args, returns: returns, verified: verified, pending: pending)
     end
 
     def unverified_specs
@@ -19,22 +19,51 @@ module Compact
 
     def verified_specs
       @specs.select(&:verified?)
+            .reject(&:pending?)
+    end
+
+    def pending_specs
+      @specs.select(&:pending?)
     end
 
     def verify(collaborator)
       interceptor = ArgumentInterceptor.new(collaborator)
       yield(interceptor)
-      spec = spec_matching?(interceptor)
-      spec.verify if spec
-      !spec.nil?
+      possible_matches = specs_matching_invocation(interceptor)
+
+      if possible_matches.empty?
+        interceptor.invocations.each do |method_name, method_invocations|
+          method_invocations.each do |method_invocation|
+            add_spec(method: method_name,
+                     args: method_invocation[:args],
+                     returns: method_invocation[:returns],
+                     verified: true,
+                     pending: true)
+          end
+        end
+        return PENDING
+      end
+      verified_spec = possible_matches.find{|spec| matches_exactly?(spec, interceptor) }
+      if verified_spec
+        verified_spec.verify
+        VERIFIED
+      else
+        FAILING
+      end
     end
 
     private
-    def spec_matching?(interceptor)
-      @specs.find{|spec| matches?(spec, interceptor) }
+    def specs_matching_invocation(interceptor)
+      @specs.select {|spec| matches_invocation?(spec, interceptor) }
     end
 
-    def matches?(spec, interceptor)
+    def matches_invocation?(spec, interceptor)
+      invocations = interceptor.invocations[spec.method]
+      return false unless invocations
+      invocations.any?{|invocation| invocation[:args] == spec.args  }
+    end
+
+    def matches_exactly?(spec, interceptor)
       invocations = interceptor.invocations[spec.method]
       return false unless invocations
       invocations.any?{|invocation| invocation[:args] == spec.args && invocation[:returns] == spec.returns }

@@ -1,6 +1,6 @@
 require "compact/version"
+require 'compact/contract'
+require 'compact/verification_codes'
 
 module Compact
-  class Error < StandardError; end
-  # Your code goes here...
 end

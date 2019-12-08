@@ -1,6 +1,4 @@
 require_relative './test_helper'
-require 'minitest/autorun'
-require 'compact/contract'
 require_relative './dumb_object'
 
 class ContractTest < MiniTest::Test
@@ -45,17 +43,19 @@ class ContractTest < MiniTest::Test
     def bad_collaborator.add(x,y)
       -1
     end
-    refute contract.verify(bad_collaborator){|obj| obj.add(1,2)}
+    assert_equal FAILING, contract.verify(bad_collaborator){|obj| obj.add(1,2)}
     assert contract.verified_specs.empty?
     refute_nil contract.unverified_specs.first
   end
 
-  def test_invalid_contract_verification
+  def test_contract_verification_without_collaboration_test
     contract = contract_with_spec
     collaborator = DumbObject.new
-    refute contract.verify(collaborator){|obj| obj.add(2,3)}
+    assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(2,3)}
     assert contract.verified_specs.empty?
     refute_nil contract.unverified_specs.first
+    assert_equal contract.pending_specs,
+                 [Spec.new(method: :add, args: [2,3], returns: 5, pending: true, verified: true)]
   end
 
 end

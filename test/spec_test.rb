@@ -1,7 +1,4 @@
 require_relative './test_helper'
-require 'minitest/autorun'
-require 'compact/spec'
-
 
 class SpecTest < MiniTest::Test
 

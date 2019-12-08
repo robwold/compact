@@ -1,6 +1,4 @@
 require_relative './test_helper'
-require 'minitest/autorun'
-require 'compact/argument_interceptor.rb'
 require_relative './dumb_object'
 
 class ArgumentInterceptorTest < MiniTest::Test

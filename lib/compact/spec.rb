@@ -1,11 +1,12 @@
 module Compact
   class Spec
     attr_reader :method, :args, :returns
-    def initialize( method:, args:,  returns:)
+    def initialize( method:, args:,  returns:, verified: false, pending: false)
       @method = method
       @args = args
       @returns = returns
-      @verified = false
+      @verified = verified
+      @pending = pending
     end
 
     def verified?
@@ -14,6 +15,10 @@ module Compact
 
     def verify
       @verified = true
+    end
+
+    def pending?
+      @pending
     end
 
     def == other_spec

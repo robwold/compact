@@ -9,9 +9,9 @@ class ContractTest < MiniTest::Test
 
   def contract_with_spec
     contract = new_contract
-    contract.add_spec(method: :add,
-                      args: [1,2],
-                      returns: 3)
+    contract.add_spec(invocation: Invocation.new(method: :add,
+                                                 args: [1, 2],
+                                                 returns: 3))
     contract
   end
 

@@ -16,7 +16,8 @@ class ArgumentInterceptorTest < MiniTest::Test
   def test_registers_args_and_results
     @subject.add(1, 2)
     @subject.add(3, 4)
-    expected = {add: [ {args: [1, 2], returns: 3},{args:[3, 4], returns: 7}]}
+    expected = [ Invocation.new(method: :add, args: [1, 2], returns: 3),
+                 Invocation.new(method: :add, args:[3, 4], returns: 7)]
     assert_equal expected, @subject.invocations
   end
 end

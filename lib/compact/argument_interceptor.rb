@@ -3,15 +3,19 @@ module Compact
     attr_accessor :invocations
 
     def initialize(delegate)
-      @invocations = {}
+      @invocations = []
       super
     end
 
     def method_missing(method, *args, &block)
-      @invocations[method] ||= []
+      # @invocations[method] ||= []
       returns = super
-      @invocations[method].push({args: args, returns: returns})
+      @invocations.push(Invocation.new(method: method, args: args, returns: returns))
       returns
+    end
+
+    def invocations_for_method(method)
+      @invocations.select{|inv| inv.method == method }
     end
   end
 end

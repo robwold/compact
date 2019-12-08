@@ -10,8 +10,7 @@ module Compact
       @specs = []
     end
 
-    def add_spec(method:, args:, returns:, verified: false, pending: false)
-      invocation = Invocation.new(method: method, args: args, returns: returns)
+    def add_spec(invocation:, verified: false, pending: false)
       @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
     end
 
@@ -34,14 +33,10 @@ module Compact
       possible_matches = specs_matching_invocation(interceptor)
 
       if possible_matches.empty?
-        interceptor.invocations.each do |method_name, method_invocations|
-          method_invocations.each do |method_invocation|
-            add_spec(method: method_name,
-                     args: method_invocation[:args],
-                     returns: method_invocation[:returns],
+        interceptor.invocations.each do |invocation|
+            add_spec(invocation: invocation,
                      verified: true,
                      pending: true)
-          end
         end
         return PENDING
       end
@@ -60,15 +55,13 @@ module Compact
     end
 
     def matches_invocation?(spec, interceptor)
-      invocations = interceptor.invocations[spec.method]
-      return false unless invocations
-      invocations.any?{|invocation| invocation[:args] == spec.args  }
+      invocations = interceptor.invocations_for_method(spec.method)
+      invocations&.any?{|invocation| invocation.args == spec.args  }
     end
 
     def matches_exactly?(spec, interceptor)
-      invocations = interceptor.invocations[spec.method]
-      return false unless invocations
-      invocations.any?{|invocation| invocation[:args] == spec.args && invocation[:returns] == spec.returns }
+      invocations = interceptor.invocations_for_method(spec.method)
+      invocations&.any?{|invocation| invocation == spec.invocation }
     end
   end
 end

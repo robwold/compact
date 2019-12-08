@@ -22,9 +22,10 @@ class ContractTest < MiniTest::Test
   def test_adding_a_spec
     contract = contract_with_spec
     spec = contract.specs.first
-    assert_equal Spec.new(method: :add,
-                          args: [1,2],
-                          returns: 3), spec
+    invocation = Invocation.new(method: :add,
+                                args: [1,2],
+                                returns: 3)
+    assert_equal Spec.new(invocation: invocation), spec
     assert_equal [spec], contract.unverified_specs
     assert contract.verified_specs.empty?
   end
@@ -55,7 +56,11 @@ class ContractTest < MiniTest::Test
     assert contract.verified_specs.empty?
     refute_nil contract.unverified_specs.first
     assert_equal contract.pending_specs,
-                 [Spec.new(method: :add, args: [2,3], returns: 5, pending: true, verified: true)]
+                 [Spec.new(
+                     invocation: Invocation.new( method: :add, args: [2,3], returns: 5),
+                     pending: true,
+                     verified: true
+                 )]
   end
 
 end

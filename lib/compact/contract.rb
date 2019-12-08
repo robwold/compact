@@ -1,5 +1,6 @@
 require_relative './spec'
 require_relative './argument_interceptor'
+require_relative './invocation'
 module Compact
   class Contract
     attr_reader :specs
@@ -10,7 +11,8 @@ module Compact
     end
 
     def add_spec(method:, args:, returns:, verified: false, pending: false)
-      @specs.push Spec.new(method: method, args: args, returns: returns, verified: verified, pending: pending)
+      invocation = Invocation.new(method: method, args: args, returns: returns)
+      @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
     end
 
     def unverified_specs

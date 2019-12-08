@@ -1,10 +1,9 @@
 module Compact
   class Spec
-    attr_reader :method, :args, :returns
-    def initialize( method:, args:,  returns:, verified: false, pending: false)
-      @method = method
-      @args = args
-      @returns = returns
+    attr_reader :invocation
+
+    def initialize(invocation:, verified: false, pending: false)
+      @invocation = invocation
       @verified = verified
       @pending = pending
     end
@@ -21,11 +20,20 @@ module Compact
       @pending
     end
 
+    def method
+      @invocation.method
+    end
+
+    def args
+      @invocation.args
+    end
+
+    def returns
+      @invocation.returns
+    end
+
     def == other_spec
-      same_args = args == other_spec.args
-      same_method = method == other_spec.method
-      same_returns = returns == other_spec.returns
-      same_args && same_method && same_returns
+      invocation == other_spec.invocation
     end
   end
 end

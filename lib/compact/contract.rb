@@ -34,8 +34,10 @@ module Compact
     end
 
     def watch(test_double)
-      instance_method_names = test_double.methods - Object.new.methods
       this = self
+      original_verbosity = $VERBOSE
+      $VERBOSE = nil
+      instance_method_names = test_double.methods - Object.new.methods
       instance_method_names.each do |name|
         real_method = test_double.method(name)
         test_double.define_singleton_method(name) do |*args, &block|
@@ -45,6 +47,7 @@ module Compact
           return_value
         end
       end
+      $VERBOSE = original_verbosity
     end
 
     private

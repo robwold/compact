@@ -54,13 +54,24 @@ class ContractTest < MiniTest::Test
     collaborator = DumbObject.new
     assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(2,3)}
     assert contract.verified_specs.empty?
-    refute_nil contract.unverified_specs.first
     assert_equal contract.pending_specs,
                  [Spec.new(
                      invocation: Invocation.new( method: :add, args: [2,3], returns: 5),
                      pending: true,
                      verified: true
                  )]
+  end
+
+  def test_recording_interactions
+    contract = new_contract
+    stub = Object.new
+    def stub.multiply(a,b)
+      6
+    end
+    contract.watch(stub)
+    stub.multiply(2,3)
+    assert_equal [Spec.new(invocation: Invocation.new(method: :multiply, args: [2,3], returns: 6))],
+                 contract.unverified_specs
   end
 
 end

@@ -33,6 +33,20 @@ module Compact
       compare_to_specs interceptor.invocations
     end
 
+    def watch(test_double)
+      instance_method_names = test_double.methods - Object.new.methods
+      this = self
+      instance_method_names.each do |name|
+        real_method = test_double.method(name)
+        test_double.define_singleton_method(name) do |*args, &block|
+          return_value = real_method.call(*args, &block)
+          invocation = Invocation.new(method: name, args: args, returns: return_value)
+          this.add_spec(invocation: invocation)
+          return_value
+        end
+      end
+    end
+
     private
     def specs_matching(invocations)
       @specs.select {|spec| matches_invocation?(spec, invocations) }

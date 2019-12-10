@@ -14,17 +14,17 @@ module Compact
       @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
     end
 
-    def unverified_specs
-      @specs.reject(&:verified?)
+    def unverified_invocations
+      @specs.reject(&:verified?).map(&:invocation)
     end
 
-    def verified_specs
+    def verified_invocations
       @specs.select(&:verified?)
-            .reject(&:pending?)
+            .reject(&:pending?).map(&:invocation)
     end
 
-    def pending_specs
-      @specs.select(&:pending?)
+    def pending_invocations
+      @specs.select(&:pending?).map(&:invocation)
     end
 
     def verify(collaborator)

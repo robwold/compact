@@ -26,16 +26,18 @@ class ContractTest < MiniTest::Test
                                 args: [1,2],
                                 returns: 3)
     assert_equal Spec.new(invocation: invocation), spec
-    assert_equal [spec], contract.unverified_specs
-    assert contract.verified_specs.empty?
+    assert_equal [invocation], contract.unverified_invocations
+    assert contract.verified_invocations.empty?
   end
 
   def test_passing_contract_verification
     contract = contract_with_spec
     collaborator = DumbObject.new
     assert contract.verify(collaborator){|obj| obj.add(1,2)}
-    assert contract.unverified_specs.empty?
-    refute_nil contract.verified_specs.first
+    assert contract.unverified_invocations.empty?
+    assert_equal contract.verified_invocations.first, Invocation.new(method: :add,
+                                                                     args: [1,2],
+                                                                     returns: 3)
   end
 
   def test_failing_contract_verification
@@ -45,21 +47,16 @@ class ContractTest < MiniTest::Test
       -1
     end
     assert_equal FAILING, contract.verify(bad_collaborator){|obj| obj.add(1,2)}
-    assert contract.verified_specs.empty?
-    refute_nil contract.unverified_specs.first
+    assert contract.verified_invocations.empty?
+    refute_nil contract.unverified_invocations.first
   end
 
   def test_contract_verification_without_collaboration_test
     contract = contract_with_spec
     collaborator = DumbObject.new
     assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(2,3)}
-    assert contract.verified_specs.empty?
-    assert_equal contract.pending_specs,
-                 [Spec.new(
-                     invocation: Invocation.new( method: :add, args: [2,3], returns: 5),
-                     pending: true,
-                     verified: true
-                 )]
+    assert contract.verified_invocations.empty?
+    assert_equal contract.pending_invocations, [Invocation.new( method: :add, args: [2,3], returns: 5)]
   end
 
   def test_recording_interactions
@@ -70,8 +67,8 @@ class ContractTest < MiniTest::Test
     end
     contract.watch(stub)
     stub.multiply(2,3)
-    assert_equal [Spec.new(invocation: Invocation.new(method: :multiply, args: [2,3], returns: 6))],
-                 contract.unverified_specs
+    assert_equal [Invocation.new(method: :multiply, args: [2,3], returns: 6)],
+                 contract.unverified_invocations
   end
 
 end

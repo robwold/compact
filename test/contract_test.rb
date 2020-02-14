@@ -9,9 +9,7 @@ class ContractTest < MiniTest::Test
 
   def contract_with_spec
     contract = new_contract
-    contract.add_spec(invocation: Invocation.new(method: :add,
-                                                 args: [1, 2],
-                                                 returns: 3))
+    contract.add_spec(invocation: example_invocation)
     contract
   end
 
@@ -19,12 +17,16 @@ class ContractTest < MiniTest::Test
     assert_equal([], new_contract.specs)
   end
 
+  def example_invocation
+    Invocation.new(method: :add,
+                   args: [1,2],
+                   returns: 3)
+  end
+
   def test_adding_a_spec
     contract = contract_with_spec
     spec = contract.specs.first
-    invocation = Invocation.new(method: :add,
-                                args: [1,2],
-                                returns: 3)
+    invocation = example_invocation
     assert_equal Spec.new(invocation: invocation), spec
     assert_equal [invocation], contract.unverified_invocations
     assert contract.verified_invocations.empty?
@@ -33,11 +35,9 @@ class ContractTest < MiniTest::Test
   def test_passing_contract_verification
     contract = contract_with_spec
     collaborator = DumbObject.new
-    assert contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert_equal VERIFIED, contract.verify(collaborator){|obj| obj.add(1,2)}
     assert contract.unverified_invocations.empty?
-    assert_equal contract.verified_invocations.first, Invocation.new(method: :add,
-                                                                     args: [1,2],
-                                                                     returns: 3)
+    assert_equal contract.verified_invocations.first, example_invocation
   end
 
   def test_failing_contract_verification

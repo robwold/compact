@@ -4,7 +4,7 @@ require_relative './dumb_object'
 class ContractTest < MiniTest::Test
 
   def new_contract
-    @subject = Contract.new('dumb_object')
+    @subject = Contract.new
   end
 
   def contract_with_spec

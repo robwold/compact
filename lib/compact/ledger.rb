@@ -2,7 +2,7 @@ module Compact
   class Ledger
 
     def initialize
-      @contracts = Hash.new(Contract.new(''))
+      @contracts = Hash.new(Contract.new)
     end
 
     def record(name, test_double)

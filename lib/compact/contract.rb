@@ -5,8 +5,7 @@ module Compact
   class Contract
     attr_reader :specs
 
-    def initialize(name)
-      @name = name
+    def initialize
       @specs = []
     end
 

@@ -27,9 +27,10 @@ module Compact
       @specs.select(&:pending?).map(&:invocation)
     end
 
-    def verify(collaborator)
+    def verify(collaborator, block = Proc.new)
       interceptor = ArgumentInterceptor.new(collaborator)
-      yield(interceptor)
+      # yield(interceptor)
+      block.call(interceptor)
       compare_to_specs interceptor.invocations
     end
 

@@ -15,10 +15,10 @@ class LedgerTest < MiniTest::Test
     ledger = Ledger.new
     collaborator = DumbObject.new
     stub = get_adder_stub
-    ledger.record('adder',stub)
+    ledger.record_contract('adder', stub)
     # This would occur inside some method under test
     stub.add(1,2)
-    ledger.verify('adder', collaborator){|collaborator| collaborator.add(1,2)}
+    ledger.verify_contract('adder', collaborator){|collaborator| collaborator.add(1,2)}
     assert_equal [Invocation.new(method: :add,
                                  args: [1,2],
                                  returns: 3)], ledger.verified_specs('adder')

@@ -5,12 +5,12 @@ module Compact
       @contracts = Hash.new(Contract.new)
     end
 
-    def record(name, test_double)
+    def record_contract(name, test_double)
       contract = @contracts[name]
       contract.watch(test_double)
     end
 
-    def verify(name, test_double, block = Proc.new )
+    def verify_contract(name, test_double, block = Proc.new )
       contract = @contracts[name]
       contract.verify(test_double, block)
     end

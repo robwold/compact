@@ -36,7 +36,7 @@ class ContractTest < MiniTest::Test
     contract = contract_with_spec
     collaborator = DumbObject.new
     assert_equal VERIFIED, contract.verify(collaborator){|obj| obj.add(1,2)}
-    assert contract.unverified_invocations.empty?
+    assert contract.verified?
     assert_equal contract.verified_invocations.first, example_invocation
   end
 
@@ -69,6 +69,19 @@ class ContractTest < MiniTest::Test
     stub.multiply(2,3)
     assert_equal [Invocation.new(method: :multiply, args: [2,3], returns: 6)],
                  contract.unverified_invocations
+  end
+
+  def test_describe_pending_specs
+    contract = contract_with_spec
+    expected = <<~MSG
+      The following methods were invoked on test doubles without corresponding contract tests:
+      ================================================================================
+      method: add
+      invoke with: [1, 2]
+      returns: 3
+      ================================================================================
+    MSG
+    assert_equal expected, contract.describe_unverified_specs
   end
 
 end

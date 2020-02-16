@@ -17,5 +17,13 @@ module Compact
       same_method = method == other_invocation.method
       same_args && same_method
     end
+
+    def describe
+      <<~DESCRIPTION
+      method: #{method}
+      invoke with: #{args.inspect}
+      returns: #{returns}
+      DESCRIPTION
+    end
   end
 end

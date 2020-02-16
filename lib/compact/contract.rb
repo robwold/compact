@@ -13,6 +13,21 @@ module Compact
       @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
     end
 
+    def verified?
+      unverified_invocations.empty?
+    end
+
+    def describe_unverified_specs
+      banner = "================================================================================"
+      <<~MSG
+      The following methods were invoked on test doubles without corresponding contract tests:
+      #{banner}
+      #{unverified_invocations.map(&:describe)
+                              .join(banner).strip}
+      #{banner}
+      MSG
+    end
+
     def unverified_invocations
       @specs.reject(&:verified?).map(&:invocation)
     end
@@ -28,7 +43,6 @@ module Compact
 
     def verify(collaborator, block = Proc.new)
       interceptor = ArgumentInterceptor.new(collaborator)
-      # yield(interceptor)
       block.call(interceptor)
       compare_to_specs interceptor.invocations
     end

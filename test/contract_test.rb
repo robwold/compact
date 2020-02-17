@@ -51,12 +51,21 @@ class ContractTest < MiniTest::Test
     refute_nil contract.unverified_invocations.first
   end
 
-  def test_contract_verification_without_collaboration_test
-    contract = contract_with_spec
+  def test_contract_verification_out_of_order
+    contract = new_contract
     collaborator = DumbObject.new
     assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(2,3)}
-    assert contract.verified_invocations.empty?
+    refute contract.verified?
     assert_equal contract.pending_invocations, [Invocation.new( method: :add, args: [2,3], returns: 5)]
+
+    stub = Object.new
+    def stub.add(x,y)
+      5
+    end
+
+    contract.watch(stub)
+    stub.add(2,3)
+    assert contract.verified?
   end
 
   def test_recording_interactions

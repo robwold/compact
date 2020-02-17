@@ -14,7 +14,7 @@ module Compact
     end
 
     def verified?
-      unverified_invocations.empty?
+      unverified_invocations.empty? && pending_invocations.empty?
     end
 
     def describe_unverified_specs
@@ -57,7 +57,15 @@ module Compact
         test_double.define_singleton_method(name) do |*args, &block|
           return_value = real_method.call(*args, &block)
           invocation = Invocation.new(method: name, args: args, returns: return_value)
-          this.add_spec(invocation: invocation)
+          matching_invocation = this.pending_invocations.find{|inv| inv == invocation}
+          if matching_invocation
+            matching_spec = this.specs.find{|spec| spec.pending? && spec.invocation == invocation }
+            matching_spec.verified = true
+            matching_spec.pending = false
+          else
+            this.add_spec(invocation: invocation)
+          end
+
           return_value
         end
       end

@@ -54,29 +54,22 @@ class ContractTest < MiniTest::Test
   def test_contract_verification_out_of_order
     contract = new_contract
     collaborator = DumbObject.new
-    assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(2,3)}
+    assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(1,2) }
     refute contract.verified?
-    assert_equal contract.pending_invocations, [Invocation.new( method: :add, args: [2,3], returns: 5)]
+    assert_equal contract.pending_invocations, [Invocation.new( method: :add, args: [1,2], returns: 3)]
 
-    stub = Object.new
-    def stub.add(x,y)
-      5
-    end
-
+    stub = TestHelpers::stubs_add_one_two
     contract.watch(stub)
-    stub.add(2,3)
+    stub.add(1,2)
     assert contract.verified?
   end
 
   def test_recording_interactions
     contract = new_contract
-    stub = Object.new
-    def stub.multiply(a,b)
-      6
-    end
+    stub = TestHelpers::stubs_add_one_two
     contract.watch(stub)
-    stub.multiply(2,3)
-    assert_equal [Invocation.new(method: :multiply, args: [2,3], returns: 6)],
+    stub.add(1,2)
+    assert_equal [example_invocation],
                  contract.unverified_invocations
   end
 

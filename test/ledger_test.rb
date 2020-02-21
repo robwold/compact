@@ -3,28 +3,20 @@ require_relative './dumb_object'
 
 class LedgerTest < MiniTest::Test
 
-  def get_adder_stub
-    stub = Object.new
-    def stub.add(x,y)
-      3
-    end
-    stub
-  end
-
   def test_spec_verification_in_order
     ledger = Ledger.new
     collaborator = DumbObject.new
-    stub = get_adder_stub
+    stub = TestHelpers.stubs_add_one_two
     ledger.record_contract('adder', stub)
     # This would occur inside some method under test
     stub.add(1,2)
-    ledger.verify_contract('adder', collaborator){|collaborator| collaborator.add(1,2)}
+    ledger.verify_contract('adder', collaborator){|collaborator| collaborator.add(1,2) }
     assert_equal 'All test double contracts are satisfied.', ledger.summary
   end
 
   def test_unverified_spec
     ledger = Ledger.new
-    stub = get_adder_stub
+    stub = TestHelpers.stubs_add_one_two
     ledger.record_contract('adder', stub)
     stub.add(1,2)
     expected = <<~MSG

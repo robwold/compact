@@ -9,44 +9,7 @@ module Compact
       @specs = []
     end
 
-    def add_spec(invocation:, verified: false, pending: false)
-      @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
-    end
-
-    def verified?
-      unverified_invocations.empty? && pending_invocations.empty?
-    end
-
-    def describe_unverified_specs
-      banner = "================================================================================"
-      <<~MSG
-      The following methods were invoked on test doubles without corresponding contract tests:
-      #{banner}
-      #{unverified_invocations.map(&:describe)
-                              .join(banner).strip}
-      #{banner}
-      MSG
-    end
-
-    def unverified_invocations
-      @specs.reject(&:verified?).map(&:invocation)
-    end
-
-    def verified_invocations
-      @specs.select(&:verified?)
-            .reject(&:pending?).map(&:invocation)
-    end
-
-    def pending_invocations
-      @specs.select(&:pending?).map(&:invocation)
-    end
-
-    def verify(collaborator, block = Proc.new)
-      interceptor = ArgumentInterceptor.new(collaborator)
-      block.call(interceptor)
-      compare_to_specs interceptor.invocations
-    end
-
+    ## PUBLIC API: used in non-test code
     def watch(test_double)
       this = self
       original_verbosity = $VERBOSE
@@ -70,6 +33,50 @@ module Compact
         end
       end
       $VERBOSE = original_verbosity
+    end
+
+    def verified?
+      unverified_invocations.empty? && pending_invocations.empty?
+    end
+
+    def describe_unverified_specs
+      banner = "================================================================================"
+      <<~MSG
+      The following methods were invoked on test doubles without corresponding contract tests:
+      #{banner}
+      #{unverified_invocations.map(&:describe)
+                           .join(banner).strip}
+      #{banner}
+      MSG
+    end
+
+    def verify(collaborator, block = Proc.new)
+      interceptor = ArgumentInterceptor.new(collaborator)
+      block.call(interceptor)
+      compare_to_specs interceptor.invocations
+    end
+
+    # CAN make everything below private?
+
+    def add_spec(invocation:, verified: false, pending: false)
+      @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
+    end
+
+
+
+
+
+    def unverified_invocations
+      @specs.reject(&:verified?).map(&:invocation)
+    end
+
+    def verified_invocations
+      @specs.select(&:verified?)
+            .reject(&:pending?).map(&:invocation)
+    end
+
+    def pending_invocations
+      @specs.select(&:pending?).map(&:invocation)
     end
 
     private

@@ -11,7 +11,7 @@ module Compact
 
     ## ========PUBLIC API: used in non-test code===================
     def watch(test_double)
-      this = self
+      contract = self
       original_verbosity = $VERBOSE
       $VERBOSE = nil
       instance_method_names = test_double.methods - Object.new.methods
@@ -19,16 +19,7 @@ module Compact
         real_method = test_double.method(name)
         test_double.define_singleton_method(name) do |*args, &block|
           return_value = real_method.call(*args, &block)
-          invocation = Invocation.new(method: name, args: args, returns: return_value)
-          matching_invocation = this.pending_invocations.find{|inv| inv == invocation}
-          if matching_invocation
-            matching_spec = this.specs.find{|spec| spec.pending? && spec.invocation == invocation }
-            matching_spec.verified = true
-            matching_spec.pending = false
-          else
-            this.add_spec(invocation: invocation)
-          end
-
+          contract.add_invocation Invocation.new(method: name, args: args, returns: return_value)
           return_value
         end
       end
@@ -62,12 +53,15 @@ module Compact
     # we're defining methods on the watched object that
     # invoke these as public methods.
 
-    def pending_invocations
-      @specs.select(&:pending?).map(&:invocation)
-    end
-
-    def add_spec(invocation:, verified: false, pending: false)
-      @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
+    def add_invocation(invocation)
+      matching_invocation = pending_invocations.find{|inv| inv == invocation}
+      if matching_invocation
+        matching_spec = specs.find{|spec| spec.pending? && spec.invocation == invocation }
+        matching_spec.verified = true
+        matching_spec.pending = false
+      else
+        add_spec(invocation: invocation)
+      end
     end
 
     private
@@ -79,6 +73,14 @@ module Compact
     def verified_invocations
       @specs.select(&:verified?)
             .reject(&:pending?).map(&:invocation)
+    end
+
+    def pending_invocations
+      @specs.select(&:pending?).map(&:invocation)
+    end
+
+    def add_spec(invocation:, verified: false, pending: false)
+      @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
     end
 
     def specs_matching(invocations)

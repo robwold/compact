@@ -9,7 +9,7 @@ class ContractTest < MiniTest::Test
 
   def contract_with_spec
     contract = new_contract
-    contract.add_spec(invocation: example_invocation)
+    contract.add_invocation(example_invocation)
     contract
   end
 
@@ -51,7 +51,7 @@ class ContractTest < MiniTest::Test
     collaborator = DumbObject.new
     assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(1,2) }
     refute contract.verified?
-    assert_equal contract.pending_invocations, [Invocation.new( method: :add, args: [1,2], returns: 3)]
+    # assert_equal contract.pending_invocations, [Invocation.new( method: :add, args: [1,2], returns: 3)]
 
     stub = TestHelpers::stubs_add_one_two
     contract.watch(stub)

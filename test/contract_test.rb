@@ -28,8 +28,6 @@ class ContractTest < MiniTest::Test
     spec = contract.specs.first
     invocation = example_invocation
     assert_equal Spec.new(invocation: invocation), spec
-    assert_equal [invocation], contract.unverified_invocations
-    assert contract.verified_invocations.empty?
   end
 
   def test_passing_contract_verification
@@ -37,7 +35,6 @@ class ContractTest < MiniTest::Test
     collaborator = DumbObject.new
     assert_equal VERIFIED, contract.verify(collaborator){|obj| obj.add(1,2)}
     assert contract.verified?
-    assert_equal contract.verified_invocations.first, example_invocation
   end
 
   def test_failing_contract_verification
@@ -47,8 +44,6 @@ class ContractTest < MiniTest::Test
       -1
     end
     assert_equal FAILING, contract.verify(bad_collaborator){|obj| obj.add(1,2)}
-    assert contract.verified_invocations.empty?
-    refute_nil contract.unverified_invocations.first
   end
 
   def test_contract_verification_out_of_order
@@ -62,15 +57,6 @@ class ContractTest < MiniTest::Test
     contract.watch(stub)
     stub.add(1,2)
     assert contract.verified?
-  end
-
-  def test_recording_interactions
-    contract = new_contract
-    stub = TestHelpers::stubs_add_one_two
-    contract.watch(stub)
-    stub.add(1,2)
-    assert_equal [example_invocation],
-                 contract.unverified_invocations
   end
 
   def test_describe_pending_specs

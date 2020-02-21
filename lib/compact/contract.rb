@@ -9,7 +9,7 @@ module Compact
       @specs = []
     end
 
-    ## PUBLIC API: used in non-test code
+    ## ========PUBLIC API: used in non-test code===================
     def watch(test_double)
       this = self
       original_verbosity = $VERBOSE
@@ -56,15 +56,21 @@ module Compact
       compare_to_specs interceptor.invocations
     end
 
-    # CAN make everything below private?
+    # ============= QUASI-private==============
+    #
+    # These methods are only used by #watch, BUT
+    # we're defining methods on the watched object that
+    # invoke these as public methods.
+
+    def pending_invocations
+      @specs.select(&:pending?).map(&:invocation)
+    end
 
     def add_spec(invocation:, verified: false, pending: false)
       @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
     end
 
-
-
-
+    private
 
     def unverified_invocations
       @specs.reject(&:verified?).map(&:invocation)
@@ -75,11 +81,6 @@ module Compact
             .reject(&:pending?).map(&:invocation)
     end
 
-    def pending_invocations
-      @specs.select(&:pending?).map(&:invocation)
-    end
-
-    private
     def specs_matching(invocations)
       @specs.select {|spec| matches_invocation?(spec, invocations) }
     end

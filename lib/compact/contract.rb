@@ -30,12 +30,31 @@ module Compact
       unverified_invocations.empty? && pending_invocations.empty?
     end
 
+    def has_pending?
+      !pending_invocations.empty?
+    end
+
+    def has_unverified?
+      !unverified_invocations.empty?
+    end
+
     def describe_unverified_specs
       banner = "================================================================================"
       <<~MSG
       The following methods were invoked on test doubles without corresponding contract tests:
       #{banner}
       #{unverified_invocations.map(&:describe)
+                           .join(banner).strip}
+      #{banner}
+      MSG
+    end
+
+    def describe_pending_specs
+      banner = "================================================================================"
+      <<~MSG
+      No test doubles mirror the following verified invocations:
+      #{banner}
+      #{pending_invocations.map(&:describe)
                            .join(banner).strip}
       #{banner}
       MSG

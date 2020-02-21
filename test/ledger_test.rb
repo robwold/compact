@@ -31,4 +31,21 @@ class LedgerTest < MiniTest::Test
     MSG
     assert_equal expected, ledger.summary
   end
+
+  def test_pending_spec
+    ledger = Ledger.new
+    collaborator = DumbObject.new
+    ledger.verify_contract('adder', collaborator){|adder| adder.add(1,2) }
+    expected = <<~MSG
+      The following contracts could not be verified:
+      Role Name: adder
+      No test doubles mirror the following verified invocations:
+      ================================================================================
+      method: add
+      invoke with: [1, 2]
+      returns: 3
+      ================================================================================
+    MSG
+    assert_equal expected, ledger.summary
+  end
 end

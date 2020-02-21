@@ -11,9 +11,10 @@ module Compact
       contract.watch(test_double)
     end
 
-    def verify_contract(name, test_double, block = Proc.new )
+    def verify_contract(name, collaborator, block = Proc.new )
+      @contracts[name] ||= Contract.new
       contract = @contracts[name]
-      contract.verify(test_double, block)
+      contract.verify(collaborator, block)
     end
 
     def summary
@@ -24,25 +25,33 @@ module Compact
       if unverified_contracts.empty?
         'All test double contracts are satisfied.'
       else
-        <<~EOF
+        msg = <<~EOF
         The following contracts could not be verified:
         #{summarise_unverified_contracts}
+        #{summarise_pending_contracts}
         EOF
+        msg.gsub(/\n\n/, "\n")
       end
     end
 
     private
     def summarise_unverified_contracts
+      return nil unless @contracts.values.any?{|c| c.has_unverified? }
       summary = ""
       @contracts.each do |name, contract|
-        summary += "Role Name: #{name}\n#{contract.describe_unverified_specs}"
+        summary += "Role Name: #{name}\n#{contract.describe_unverified_specs}" if contract.has_unverified?
       end
       summary.strip
     end
 
-    # def verified_specs(name)
-    #   contract = @contracts[name]
-    #   contract.verified_invocations
-    # end
+    def summarise_pending_contracts
+      return nil unless @contracts.values.any?{|c| c.has_pending? }
+      summary = ""
+      @contracts.each do |name, contract|
+        summary += "Role Name: #{name}\n#{contract.describe_pending_specs}" if contract.has_pending?
+      end
+      summary.strip
+    end
+
   end
 end

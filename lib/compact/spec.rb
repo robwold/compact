@@ -2,9 +2,9 @@ module Compact
   class Spec
     attr_reader :invocation
 
-    def initialize(invocation:, pending: false)
+    def initialize(invocation, status_code = UNTESTED)
       @invocation = invocation
-      @status_code = pending ? :pending : nil
+      @status_code = status_code
     end
 
     def verified?

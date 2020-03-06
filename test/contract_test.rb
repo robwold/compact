@@ -27,7 +27,7 @@ class ContractTest < MiniTest::Test
     contract = contract_with_spec
     spec = contract.specs.first
     invocation = example_invocation
-    assert_equal Spec.new(invocation: invocation), spec
+    assert_equal Spec.new(invocation), spec
   end
 
   def test_passing_contract_verification

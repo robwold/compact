@@ -6,7 +6,7 @@ class SpecTest < MiniTest::Test
     invocation = Invocation.new(args: [1],
                                 method: :foo,
                                 returns: [2])
-    subject = Spec.new(invocation: invocation)
+    subject = Spec.new(invocation)
     refute subject.verified?
     refute subject.pending?
   end

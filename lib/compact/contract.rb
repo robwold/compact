@@ -99,7 +99,8 @@ module Compact
     end
 
     def add_spec(invocation:, verified: false, pending: false)
-      @specs.push Spec.new(invocation: invocation, pending: pending)
+      status_code = pending ? PENDING : UNTESTED
+      @specs.push Spec.new(invocation, status_code)
     end
 
     def specs_matching(invocations)

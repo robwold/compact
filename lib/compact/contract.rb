@@ -76,7 +76,7 @@ module Compact
       matching_invocation = pending_invocations.find{|inv| inv == invocation}
       if matching_invocation
         matching_spec = specs.find{|spec| spec.pending? && spec.invocation == invocation }
-        matching_spec.verified = true
+        matching_spec.verify
         matching_spec.pending = false
       else
         add_spec(invocation: invocation)
@@ -99,7 +99,7 @@ module Compact
     end
 
     def add_spec(invocation:, verified: false, pending: false)
-      @specs.push Spec.new(invocation: invocation, verified: verified, pending: pending)
+      @specs.push Spec.new(invocation: invocation, pending: pending)
     end
 
     def specs_matching(invocations)

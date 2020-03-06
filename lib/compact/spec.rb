@@ -3,18 +3,18 @@ module Compact
     attr_reader :invocation
     attr_accessor :verified, :pending
 
-    def initialize(invocation:, verified: false, pending: false)
+    def initialize(invocation:, pending: false)
       @invocation = invocation
-      @verified = verified
       @pending = pending
+      @status_code = nil
     end
 
     def verified?
-      @verified
+      @status_code == :verified
     end
 
     def verify
-      @verified = true
+      @status_code = :verified
     end
 
     def pending?

@@ -1,12 +1,10 @@
 module Compact
   class Spec
     attr_reader :invocation
-    attr_accessor :verified, :pending
 
     def initialize(invocation:, pending: false)
       @invocation = invocation
-      @pending = pending
-      @status_code = nil
+      @status_code = pending ? :pending : nil
     end
 
     def verified?
@@ -18,7 +16,11 @@ module Compact
     end
 
     def pending?
-      @pending
+      @status_code == :pending
+    end
+
+    def pending!
+      @status_code = :pending
     end
 
     def == other_spec

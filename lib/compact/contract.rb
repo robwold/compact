@@ -77,7 +77,7 @@ module Compact
       if matching_invocation
         matching_spec = specs.find{|spec| spec.pending? && spec.invocation == invocation }
         matching_spec.verify
-        matching_spec.pending = false
+        # matching_spec.pending!
       else
         add_spec(invocation: invocation)
       end
@@ -132,7 +132,6 @@ module Compact
     def add_pending_specs(invocations)
       invocations.each do |invocation|
         add_spec(invocation: invocation,
-                 verified: true,
                  pending: true)
       end
     end

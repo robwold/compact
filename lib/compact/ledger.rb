@@ -36,10 +36,10 @@ module Compact
 
     private
     def summarise_unverified_contracts
-      return nil unless @contracts.values.any?{|c| c.has_unverified? }
+      return nil unless @contracts.values.any?{|c| c.has_untested? }
       summary = ""
       @contracts.each do |name, contract|
-        summary += "Role Name: #{name}\n#{contract.describe_unverified_specs}" if contract.has_unverified?
+        summary += "Role Name: #{name}\n#{contract.describe_untested_specs}" if contract.has_untested?
       end
       summary.strip
     end

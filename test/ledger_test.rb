@@ -10,7 +10,7 @@ class LedgerTest < MiniTest::Test
     assert_equal 'All test double contracts are satisfied.', ledger.summary
   end
 
-  def test_unverified_spec
+  def test_untested_spec
     ledger = ledger_with_contract
     expected = <<~MSG
       The following contracts could not be verified:
@@ -71,7 +71,7 @@ class LedgerTest < MiniTest::Test
     ledger = Ledger.new
     stub = TestHelpers.stubs_add_one_two
     ledger.record_contract('adder', stub)
-    # in real useage stub would be injected as a dependency, and this would be
+    # in real usage stub would be injected as a dependency, and this would be
     # invoked in a collaboration test
     stub.add(1, 2)
     ledger

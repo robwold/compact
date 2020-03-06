@@ -77,9 +77,8 @@ module Compact
       if matching_invocation
         matching_spec = specs.find{|spec| spec.pending? && spec.invocation == invocation }
         matching_spec.verify
-        # matching_spec.pending!
       else
-        add_spec(invocation: invocation)
+        add_spec(invocation)
       end
     end
 
@@ -98,8 +97,7 @@ module Compact
       @specs.select(&:pending?).map(&:invocation)
     end
 
-    def add_spec(invocation:, verified: false, pending: false)
-      status_code = pending ? PENDING : UNTESTED
+    def add_spec(invocation, status_code = UNTESTED)
       @specs.push Spec.new(invocation, status_code)
     end
 
@@ -132,8 +130,7 @@ module Compact
 
     def add_pending_specs(invocations)
       invocations.each do |invocation|
-        add_spec(invocation: invocation,
-                 pending: true)
+        add_spec(invocation, PENDING)
       end
     end
   end

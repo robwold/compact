@@ -59,7 +59,7 @@ class LedgerTest < MiniTest::Test
       method: add
       invoke with: [1, 2]
       expected: 3
-      Matching invocations returned the following values: [ -1 ]
+      Matching invocations returned the following values: [-1]
       ================================================================================
     MSG
     assert_equal expected, ledger.summary

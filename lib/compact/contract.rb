@@ -57,12 +57,10 @@ module Compact
     def describe_failing_specs
       puts "failing: #{failing_invocations.inspect}"
       puts "untested: #{untested_invocations.inspect}"
-
+      puts "pending: #{failing_invocations.inspect}"
       headline = "Attempts to verify the following method invocations failed:"
       messages = failing_invocations.map do |invocation|
-        puts "pending: #{failing_invocations.inspect}"
         bad_results = pending_invocations.select{|p| p.matches_call(invocation) }
-        puts "matching: #{bad_results.inspect}"
         invocation.describe.gsub("returns", "expected") +
             "\nMatching invocations returned the following values: #{bad_results.map(&:returns).inspect}"
       end
@@ -126,14 +124,24 @@ module Compact
     end
 
     def compare_to_specs(invocations)
-      possible_matches = specs_matching(invocations)
-      if possible_matches.empty?
-        add_pending_specs(invocations)
-      end
-      verified_spec = possible_matches.find{|spec| matches_exactly?(spec, invocations) }
+      # possible_matches = specs_matching(invocations)
+      # if possible_matches.empty?
+      #   add_pending_specs(invocations)
+      # end
+      # verified_spec = possible_matches.find{|spec| matches_exactly?(spec, invocations) }
+      # if verified_spec
+      #   verified_spec.verify
+      # else
+      #   possible_matches.each(&:failing!)
+      # end
+      verified_spec = @specs.find{|spec| matches_exactly?(spec, invocations) }
       if verified_spec
         verified_spec.verify
       else
+        possible_matches = specs_matching(invocations)
+        puts "possible matches: #{possible_matches.inspect}"
+        puts "adding invocations as pending: #{invocations}"
+        add_pending_specs(invocations)
         possible_matches.each(&:failing!)
       end
     end

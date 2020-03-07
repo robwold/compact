@@ -13,21 +13,10 @@ class ContractTest < MiniTest::Test
     contract
   end
 
-  def test_creation
-    assert_equal([], new_contract.specs)
-  end
-
   def example_invocation
     Invocation.new(method: :add,
                    args: [1,2],
                    returns: 3)
-  end
-
-  def test_adding_a_spec
-    contract = contract_with_spec
-    spec = contract.specs.first
-    invocation = example_invocation
-    assert_equal Spec.new(invocation), spec
   end
 
   def test_passing_contract_verification

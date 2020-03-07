@@ -7,6 +7,10 @@ module Compact
       @status_code = status_code
     end
 
+    def untested?
+      @status_code == :untested
+    end
+
     def verified?
       @status_code == :verified
     end
@@ -21,6 +25,14 @@ module Compact
 
     def pending!
       @status_code = :pending
+    end
+
+    def failing?
+      @status_code == :failing
+    end
+
+    def failing!
+      @status_code = :failing
     end
 
     def == other_spec

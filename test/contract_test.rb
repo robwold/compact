@@ -37,19 +37,21 @@ class ContractTest < MiniTest::Test
     assert contract.verified?
   end
 
-  def test_failing_contract_verification
-    contract = contract_with_spec
-    bad_collaborator = Object.new
-    def bad_collaborator.add(x,y)
-      -1
-    end
-    assert_equal FAILING, contract.verify(bad_collaborator){|obj| obj.add(1,2)}
-  end
+  # def test_failing_contract_verification
+  #   contract = contract_with_spec
+  #   bad_collaborator = Object.new
+  #   def bad_collaborator.add(x,y)
+  #     -1
+  #   end
+  #   contract.verify(bad_collaborator){ |obj| obj.add(1,2) }
+  #   # assert_equal [example_invocation], contract.failing_invocations
+  #
+  # end
 
   def test_contract_verification_out_of_order
     contract = new_contract
     collaborator = DumbObject.new
-    assert_equal PENDING, contract.verify(collaborator){|obj| obj.add(1,2) }
+    contract.verify(collaborator){|obj| obj.add(1,2) }
     refute contract.verified?
 
     stub = TestHelpers::stubs_add_one_two

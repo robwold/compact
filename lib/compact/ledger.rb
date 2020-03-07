@@ -27,15 +27,16 @@ module Compact
       else
         msg = <<~EOF
         The following contracts could not be verified:
-        #{summarise_unverified_contracts}
+        #{summarise_untested_contracts}
         #{summarise_pending_contracts}
+        #{summarise_failing_contracts}
         EOF
-        msg.gsub(/\n\n/, "\n")
+        msg.gsub(/\n+/, "\n")
       end
     end
 
     private
-    def summarise_unverified_contracts
+    def summarise_untested_contracts
       return nil unless @contracts.values.any?{|c| c.has_untested? }
       summary = ""
       @contracts.each do |name, contract|
@@ -49,6 +50,15 @@ module Compact
       summary = ""
       @contracts.each do |name, contract|
         summary += "Role Name: #{name}\n#{contract.describe_pending_specs}" if contract.has_pending?
+      end
+      summary.strip
+    end
+
+    def summarise_failing_contracts
+      return nil unless @contracts.values.any?{|c| c.has_failing? }
+      summary = ""
+      @contracts.each do |name, contract|
+        summary += "Role Name: #{name}\n#{contract.describe_failing_specs}" if contract.has_failing?
       end
       summary.strip
     end

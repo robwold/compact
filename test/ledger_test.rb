@@ -44,7 +44,7 @@ class LedgerTest < MiniTest::Test
 
   def test_failing_spec
     skip
-    ledger = Ledger.new
+    ledger = ledger_with_contract
 
     bad_collaborator = Object.new
     def bad_collaborator.add(x,y)
@@ -59,7 +59,7 @@ class LedgerTest < MiniTest::Test
       method: add
       invoke with: [1, 2]
       expected: 3
-      returned: -1
+      Matching invocations returned the following values: [ -1 ]
       ================================================================================
     MSG
     assert_equal expected, ledger.summary

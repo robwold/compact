@@ -27,7 +27,7 @@ module Compact
     end
 
     def verified?
-      untested_invocations.empty? && pending_invocations.empty?
+      unverified_invocations.empty?
     end
 
     def has_pending?
@@ -38,26 +38,35 @@ module Compact
       !untested_invocations.empty?
     end
 
+    def has_failing?
+      !failing_invocations.empty?
+    end
+
     def describe_untested_specs
-      banner = "================================================================================"
-      <<~MSG
-      The following methods were invoked on test doubles without corresponding contract tests:
-      #{banner}
-      #{untested_invocations.map(&:describe)
-                           .join(banner).strip}
-      #{banner}
-      MSG
+      headline = "The following methods were invoked on test doubles without corresponding contract tests:"
+      messages = untested_invocations.map(&:describe)
+      print_banner_separated(headline, messages)
     end
 
     def describe_pending_specs
-      banner = "================================================================================"
-      <<~MSG
-      No test doubles mirror the following verified invocations:
-      #{banner}
-      #{pending_invocations.map(&:describe)
-                           .join(banner).strip}
-      #{banner}
-      MSG
+      headline = "No test doubles mirror the following verified invocations:"
+      messages = pending_invocations.map(&:describe)
+      print_banner_separated(headline, messages)
+    end
+
+    def describe_failing_specs
+      puts "failing: #{failing_invocations.inspect}"
+      puts "untested: #{untested_invocations.inspect}"
+
+      headline = "Attempts to verify the following method invocations failed:"
+      messages = failing_invocations.map do |invocation|
+        puts "pending: #{failing_invocations.inspect}"
+        bad_results = pending_invocations.select{|p| p.matches_call(invocation) }
+        puts "matching: #{bad_results.inspect}"
+        invocation.describe.gsub("returns", "expected") +
+            "\nMatching invocations returned the following values: #{bad_results.map(&:returns).inspect}"
+      end
+      print_banner_separated(headline, messages)
     end
 
     def verify(collaborator, block = Proc.new)
@@ -66,9 +75,9 @@ module Compact
       compare_to_specs interceptor.invocations
     end
 
-    # ============= QUASI-private==============
+    # ============= QUASI-private ==============
     #
-    # These methods are only used by #watch, BUT
+    # This methods is only used by #watch, BUT
     # we're defining methods on the watched object that
     # invoke these as public methods.
 
@@ -84,17 +93,20 @@ module Compact
 
     private
 
-    def untested_invocations
-      @specs.reject(&:verified?).reject(&:pending?).map(&:invocation)
+    def unverified_invocations
+      @specs.reject(&:verified?).map(&:invocation)
     end
 
-    def verified_invocations
-      @specs.select(&:verified?)
-            .reject(&:pending?).map(&:invocation)
+    def untested_invocations
+      @specs.select(&:untested?).map(&:invocation)
     end
 
     def pending_invocations
       @specs.select(&:pending?).map(&:invocation)
+    end
+
+    def failing_invocations
+      @specs.select(&:failing?).map(&:invocation)
     end
 
     def add_spec(invocation, status_code = UNTESTED)
@@ -117,21 +129,27 @@ module Compact
       possible_matches = specs_matching(invocations)
       if possible_matches.empty?
         add_pending_specs(invocations)
-        return PENDING
       end
       verified_spec = possible_matches.find{|spec| matches_exactly?(spec, invocations) }
       if verified_spec
         verified_spec.verify
-        VERIFIED
       else
-        FAILING
+        possible_matches.each(&:failing!)
       end
     end
 
     def add_pending_specs(invocations)
-      invocations.each do |invocation|
-        add_spec(invocation, PENDING)
-      end
+      invocations.each { |invocation| add_spec(invocation, PENDING) }
+    end
+
+    def print_banner_separated(headline, messages)
+      banner = "================================================================================"
+      <<~MSG
+      #{headline}
+      #{banner}
+      #{messages.join(banner).strip}
+      #{banner}
+      MSG
     end
   end
 end

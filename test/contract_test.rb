@@ -22,7 +22,7 @@ class ContractTest < MiniTest::Test
   def test_passing_contract_verification
     contract = contract_with_spec
     collaborator = DumbObject.new
-    assert_equal VERIFIED, contract.verify(collaborator){|obj| obj.add(1,2)}
+    contract.verify(collaborator){|obj| obj.add(1,2)}
     assert contract.verified?
   end
 

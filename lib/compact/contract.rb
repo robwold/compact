@@ -55,12 +55,9 @@ module Compact
     end
 
     def describe_failing_specs
-      puts "failing: #{failing_invocations.inspect}"
-      puts "untested: #{untested_invocations.inspect}"
-      puts "pending: #{pending_invocations.inspect}"
       headline = "Attempts to verify the following method invocations failed:"
       messages = failing_invocations.map do |invocation|
-        bad_results = pending_invocations.select{|p| p.matches_call(invocation) }
+        bad_results = unspecified_invocations.select{|p| p.matches_call(invocation) }
         invocation.describe.gsub("returns", "expected") +
             "\nMatching invocations returned the following values: #{bad_results.map(&:returns).inspect}"
       end
@@ -86,16 +83,26 @@ module Compact
     private
 
     def untested_invocations
-      (@test_double_invocations - @collaborator_invocations).to_a
+      uncorroborated_invocations - failing_invocations
     end
 
     def pending_invocations
+      unspecified_invocations.reject do |inv|
+        failing_invocations.any? {|failure| inv.matches_call(failure)}
+      end
+    end
+
+    def uncorroborated_invocations
+      (@test_double_invocations - @collaborator_invocations).to_a
+    end
+
+    def unspecified_invocations
       (@collaborator_invocations - @test_double_invocations).to_a
     end
 
     def failing_invocations
-      untested_invocations.select do |spec|
-        pending_invocations.any?{|inv| inv.matches_call(spec)}
+      uncorroborated_invocations.select do |spec|
+        unspecified_invocations.any?{|inv| inv.matches_call(spec)}
       end
     end
 

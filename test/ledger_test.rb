@@ -43,7 +43,6 @@ class LedgerTest < MiniTest::Test
   end
 
   def test_failing_spec
-    skip
     ledger = ledger_with_contract
 
     bad_collaborator = Object.new

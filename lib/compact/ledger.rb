@@ -36,31 +36,21 @@ module Compact
     end
 
     private
-    def summarise_untested_contracts
-      return nil unless @contracts.values.any?{|c| c.has_untested? }
-      summary = ""
-      @contracts.each do |name, contract|
-        summary += "Role Name: #{name}\n#{contract.describe_untested_specs}" if contract.has_untested?
-      end
-      summary.strip
-    end
 
-    def summarise_pending_contracts
-      return nil unless @contracts.values.any?{|c| c.has_pending? }
-      summary = ""
-      @contracts.each do |name, contract|
-        summary += "Role Name: #{name}\n#{contract.describe_pending_specs}" if contract.has_pending?
+    # If the metaprogramming gets clunky to work with here git can help you out with
+    # some explicit, repetitive definitions.
+    [:untested, :pending, :failing].each do |category|
+      method_name = "summarise_#{category}_contracts"
+      test_for_presence = "has_#{category}?"
+      describe_category_specs = "describe_#{category}_specs"
+      define_method(method_name) do
+        return nil unless @contracts.values.any?{|c| c.send(test_for_presence) }
+        summary = ""
+        @contracts.each do |name, contract|
+          summary += "Role Name: #{name}\n#{contract.send(describe_category_specs)}" if contract.send(test_for_presence)
+        end
+        summary.strip
       end
-      summary.strip
-    end
-
-    def summarise_failing_contracts
-      return nil unless @contracts.values.any?{|c| c.has_failing? }
-      summary = ""
-      @contracts.each do |name, contract|
-        summary += "Role Name: #{name}\n#{contract.describe_failing_specs}" if contract.has_failing?
-      end
-      summary.strip
     end
 
   end

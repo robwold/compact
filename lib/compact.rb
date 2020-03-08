@@ -7,8 +7,8 @@ module Compact
   class LedgerWrapper
     @ledger = Ledger.new
 
-    def self.record_contract(name, test_double)
-      @ledger.record_contract(name, test_double)
+    def self.record_contract(name, test_double, methods_to_watch = [])
+      @ledger.record_contract(name, test_double, methods_to_watch)
     end
 
     def self.verify_contract(name, collaborator, block = Proc.new )
@@ -20,8 +20,8 @@ module Compact
     end
   end
 
-  def self.record_contract(name, test_double)
-    LedgerWrapper.record_contract(name, test_double)
+  def self.record_contract(name, test_double, *methods_to_watch)
+    LedgerWrapper.record_contract(name, test_double, methods_to_watch)
   end
 
   def self.verify_contract(name, collaborator, block = Proc.new )

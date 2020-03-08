@@ -10,11 +10,11 @@ module Compact
     end
 
     ## ========PUBLIC API: used in non-test code===================
-    def watch(test_double)
+    def watch(test_double, methods_to_watch = [])
       contract = self
       original_verbosity = $VERBOSE
       $VERBOSE = nil
-      instance_method_names = test_double.methods - Object.new.methods
+      instance_method_names = methods_to_watch.empty? ? test_double.methods - Object.new.methods : methods_to_watch
       instance_method_names.each do |name|
         real_method = test_double.method(name)
         test_double.define_singleton_method(name) do |*args, &block|

@@ -5,10 +5,10 @@ module Compact
       @contracts = {}
     end
 
-    def record_contract(name, test_double)
+    def record_contract(name, test_double, methods_to_watch = [])
       @contracts[name] ||= Contract.new
       contract = @contracts[name]
-      contract.watch(test_double)
+      contract.watch(test_double, methods_to_watch)
     end
 
     def verify_contract(name, collaborator, block = Proc.new )

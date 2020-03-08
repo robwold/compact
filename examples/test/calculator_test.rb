@@ -9,8 +9,7 @@ class CalculatorTest < MiniTest::Test
   def test_addition
     adder, subtracter, multiplier, divider = [MiniTest::Mock.new, MiniTest::Mock.new,MiniTest::Mock.new,MiniTest::Mock.new]
     adder.expect(:add,3,[1,2])
-    # TODO make support named methods
-    Compact.record_contract('adder', adder)
+    Compact.record_contract('adder', adder, :add)
     subject = Calculator.new(adder, subtracter, multiplier, divider)
     subject.add(1,2)
   end

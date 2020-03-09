@@ -14,6 +14,8 @@ require "compact"
 # Addition provides a happy example of contract validation.
 # Subtraction has a collaboration test without a contract test.
 # Multiplication is a collaborator in search of a collaboration.
+# Division tells the unhappy story of a soul who's confused about
+# whether they want integer or floating point division.
 class CalculatorTest < MiniTest::Test
 
   def test_addition_collaboration

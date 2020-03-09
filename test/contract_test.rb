@@ -1,5 +1,6 @@
 require_relative './test_helper'
 require_relative './dumb_object'
+require 'mocha/minitest'
 
 class ContractTest < MiniTest::Test
 
@@ -26,17 +27,6 @@ class ContractTest < MiniTest::Test
     assert contract.verified?
   end
 
-  # def test_failing_contract_verification
-  #   contract = contract_with_spec
-  #   bad_collaborator = Object.new
-  #   def bad_collaborator.add(x,y)
-  #     -1
-  #   end
-  #   contract.verify(bad_collaborator){ |obj| obj.add(1,2) }
-  #   # assert_equal [example_invocation], contract.failing_invocations
-  #
-  # end
-
   def test_contract_verification_out_of_order
     contract = new_contract
     collaborator = DumbObject.new
@@ -62,4 +52,86 @@ class ContractTest < MiniTest::Test
     assert_equal expected, contract.describe_untested_specs
   end
 
+  def test_double_decoration
+    contract = Contract.new
+    stub = contract.prepare_double do
+      TestHelpers.stubs_add_one_two
+    end
+    stub.add(1,2)
+
+    collaborator = DumbObject.new
+    contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert contract.verified?
+  end
+
+  def test_prepare_double_works_with_minitest_mocks
+    contract = Contract.new
+    mock = contract.prepare_double do
+      mock = Minitest::Mock.new
+      mock.expect(:add,3,[1,2])
+      mock
+    end
+    assert_raises(MockExpectationError){ mock.verify }
+
+    mock.add(1,2)
+    collaborator = DumbObject.new
+    contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert contract.verified?
+  end
+
+  def test_prepare_works_with_mocha_mocks
+    contract = Contract.new
+    mock = contract.prepare_double do
+      mock = mock('adder')
+      mock.expects(:add).with(1,2).returns(3)
+      mock
+    end
+    # Don't think mocha mocks have an explicit verify method;
+    # How to test this?
+    # assert_raises(MockExpectationError){ mock.verify }
+
+    mock.add(1,2)
+    collaborator = DumbObject.new
+    contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert contract.verified?
+  end
+
+  # Error must be raised on method exit here; how to test this?
+  # def test_prepare_is_transparent_to_mocha_mocks
+  # # assert_raises(Exception) do
+  #     contract = Contract.new
+  #     mock = contract.prepare_double do
+  #       mock = mock('adder')
+  #       mock.expects(:add).with(1,2).returns(3)
+  #       mock
+  #     end
+  #   # end
+  # end
+
+  def test_watch_works_with_minitest_mocks
+    skip # Fails, but we might deprecate this method?
+    contract = Contract.new
+    mock = MiniTest::Mock.new
+    mock.expect(:add,3,[1,2])
+    contract.watch(mock)
+    mock.add(1,2)
+
+    collaborator = DumbObject.new
+    contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert contract.verified?
+  end
+
+  def test_watch_works_with_mocha_mocks
+    skip #passes, but we might deprecate this?
+    contract = Contract.new
+    mock = mock('adder')
+    mock.expects(:add).with(1,2).returns(3)
+    contract.watch(mock, [:add])
+
+    mock.add(1,2)
+
+    collaborator = DumbObject.new
+    contract.verify(collaborator){|obj| obj.add(1,2)}
+    assert contract.verified?
+  end
 end

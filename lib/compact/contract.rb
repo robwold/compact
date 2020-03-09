@@ -26,6 +26,13 @@ module Compact
       $VERBOSE = original_verbosity
     end
 
+    def prepare_double(block = Proc.new)
+      double = block.call
+      interceptor = ArgumentInterceptor.new(double)
+      interceptor.register(self)
+      interceptor
+    end
+
     def verified?
       @test_double_invocations == @collaborator_invocations
     end
@@ -69,12 +76,6 @@ module Compact
       block.call(interceptor)
       interceptor.invocations.each{|inv| @collaborator_invocations.add(inv) }
     end
-
-    # ============= QUASI-private ==============
-    #
-    # This methods is only used by #watch, BUT
-    # we're defining methods on the watched object that
-    # invoke these as public methods.
 
     def add_invocation(invocation)
       @test_double_invocations.add(invocation)

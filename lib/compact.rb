@@ -32,6 +32,4 @@ module Compact
     LedgerWrapper.summary
   end
 
-
-
 end

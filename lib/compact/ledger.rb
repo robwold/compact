@@ -5,6 +5,13 @@ module Compact
       @contracts = {}
     end
 
+    def prepare_double(name, block = Proc.new)
+      @contracts[name] ||= Contract.new
+      contract = @contracts[name]
+      contract.prepare_double(block)
+    end
+
+    # deprecate this?
     def record_contract(name, test_double, methods_to_watch = [])
       @contracts[name] ||= Contract.new
       contract = @contracts[name]

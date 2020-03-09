@@ -7,6 +7,11 @@ module Compact
   class LedgerWrapper
     @ledger = Ledger.new
 
+    def self.prepare_double(name, block = Proc.new)
+      @ledger.prepare_double(name, block)
+    end
+
+    # deprecate this?
     def self.record_contract(name, test_double, methods_to_watch = [])
       @ledger.record_contract(name, test_double, methods_to_watch)
     end
@@ -20,6 +25,11 @@ module Compact
     end
   end
 
+  def self.prepare_double(name, block = Proc.new)
+    LedgerWrapper.prepare_double(name, block)
+  end
+
+  # deprecate this
   def self.record_contract(name, test_double, *methods_to_watch)
     LedgerWrapper.record_contract(name, test_double, methods_to_watch)
   end

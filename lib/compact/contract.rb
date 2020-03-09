@@ -1,5 +1,6 @@
 require_relative './argument_interceptor'
 require_relative './invocation'
+require 'set'
 module Compact
   class Contract
     attr_reader :specs

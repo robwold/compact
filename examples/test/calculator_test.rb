@@ -44,7 +44,7 @@ class CalculatorTest < MiniTest::Test
     subject.subtract(7,2)
   end
 
-  # NO multiplication contract test!
+  # NO multiplication collaboration test!
   def test_multiplication_contract
     multiplier = Multiplier.new
     Compact.verify_contract('multiplier', multiplier) do |multiplier|

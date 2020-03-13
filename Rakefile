@@ -1,5 +1,6 @@
 require "bundler/gem_tasks"
 require "rake/testtask"
+require "rdoc/task"
 
 Rake::TestTask.new(:test) do |t|
   t.libs << "test"
@@ -13,5 +14,10 @@ Rake::TestTask.new(:examples) do |t|
   t.test_files = FileList["examples/test/*_test.rb"]
 end
 
+Rake::RDocTask.new do |rdoc|
+  files =['README.md', 'LICENSE.txt', 'lib/']
+  rdoc.rdoc_files.add(files)
+  rdoc.main = "README.md" # page to start on
+end
 
 task :default => :test

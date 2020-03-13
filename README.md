@@ -18,6 +18,7 @@ and that there are real advantages to verifying the basic correctness of our cod
 To take a concrete example, let's think about a `Calculator` class that delegates 
 responsibility for individual arithmetic operations to classes such as `Adder`. A 
 collaboration test looks like
+
 ```ruby
 class CalculatorTest < MiniTest::Test
   def test_addition_collaboration
@@ -29,8 +30,10 @@ class CalculatorTest < MiniTest::Test
   #...
 end 
 ```
+
 To ensure that the expected behaviour of our mock reflects the actual behaviour of our
 code, we write a corresponding contract test for the `Adder` class:
+
 ```ruby
 class AdderTest < MiniTest::Test
   def test_addition_contract
@@ -39,6 +42,7 @@ class AdderTest < MiniTest::Test
   end
 end
 ```
+
 Note the correspondence between the supplied arguments and the return values of the `Adder#add`
 method in these tests.
 
@@ -67,6 +71,7 @@ just verify that a stubbed method is present on some class.
 ## Usage
 To record the contracts defined by a test double, prepare the double as you normally would but 
 inside a block passed to `Compact.prepare_double(role_name)`:
+
 ```ruby
 class CalculatorTest < MiniTest::Test
   def test_addition_collaboration
@@ -81,6 +86,7 @@ class CalculatorTest < MiniTest::Test
   #...
 end 
 ```
+
 This method wraps the return value of the block with a simple decorator that tracks the methods 
 dispatched to that double, the arguments with which they are invoked, and the returned values.
 It stores these in some state that persists across test runs to produce a summary report at the
@@ -90,6 +96,7 @@ The corresponding enhancement to the contract test is achieved by the method
 `Compact.verify_contract(role_name, object_that_fulfills_role)`. Passing a block to this method in which 
 a stubbed method is invoked with the appropriate arguments and returns the correct value verifies 
 the contract.
+
 ```ruby
 class AdderTest < MiniTest::Test
   def test_addition_contract
@@ -98,6 +105,7 @@ class AdderTest < MiniTest::Test
   end
 end
 ```
+
 A contract can fail to be verified in three ways: 
 1. A missing contract test
 2. A verified method not being asserted by some test_double. 
@@ -178,7 +186,9 @@ class CalculatorTest < MiniTest::Test
 end
 
 ```
-Running this produces the following report:
+
+Running this (`rake examples`) produces the following report:
+
 ```
 The following contracts could not be verified:
 Role Name: subtracter
@@ -204,8 +214,10 @@ expected: 2.5
 Matching invocations returned the following values: [2]
 ================================================================================
 ```
+
 ## Status
 My goals in sharing this publicly at this early stage are:
+
 * To gauge interest in the idea
 * To get feedback on the API
 * To solicit anyone's input on some areas for further development below.
@@ -278,4 +290,5 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Compact project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/compact/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Compact project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the 
+[code of conduct](https://github.com/robwold/compact/blob/master/CODE_OF_CONDUCT.md).

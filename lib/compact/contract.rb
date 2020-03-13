@@ -10,7 +10,7 @@ module Compact
       @test_double_invocations = Set.new
     end
 
-    ## ========PUBLIC API: used in non-test code===================
+    #[:nodoc]
     def watch(test_double, methods_to_watch = [])
       contract = self
       original_verbosity = $VERBOSE

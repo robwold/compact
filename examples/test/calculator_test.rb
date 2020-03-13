@@ -28,11 +28,6 @@ class CalculatorTest < MiniTest::Test
     subject.add(1,2)
   end
 
-  def test_addition_contract
-    adder = Adder.new
-    Compact.verify_contract('adder', adder){|adder| assert_equal 3, adder.add(1,2) }
-  end
-
   # NO subtraction contract test!
   def test_subtraction_collaboration
     subtracter = Compact.prepare_double('subtracter') do
@@ -44,13 +39,7 @@ class CalculatorTest < MiniTest::Test
     subject.subtract(7,2)
   end
 
-  # NO multiplication collaboration test!
-  def test_multiplication_contract
-    multiplier = Multiplier.new
-    Compact.verify_contract('multiplier', multiplier) do |multiplier|
-      assert_equal 6, multiplier.multiply(2,3)
-    end
-  end
+
 
   def test_division_collaboration
     divider = Compact.prepare_double('divider') do
@@ -62,10 +51,6 @@ class CalculatorTest < MiniTest::Test
     subject.divide(5,2)
   end
 
-  # Mismatched assertion
-  def test_division_contract
-    divider = Divider.new
-    Compact.verify_contract('divider', divider){|divider| assert_equal 2, divider.divide(5,2) }
-  end
+
 
 end

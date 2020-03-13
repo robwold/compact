@@ -24,7 +24,7 @@ module Compact
   # - methods sent to it
   # - the arguments with which they were called
   # - and the return values
-  # and stores these in an instance of the +Ledger+ class for comparison
+  # and stores these +Invocation+s in an instance of the +Ledger+ class for comparison
   # with the corresponding contract tests in +verify_contract+.
   def self.prepare_double(name, block = Proc.new)
     @@ledger.prepare_double(name, block)
@@ -36,11 +36,11 @@ module Compact
   #
   # Example usage:
   #
-  # Compact.verify_contract('role_name', myObject) do
-  #    expected = return_value
-  #    actual =  myObject.method_name(*args_specified_by_test_double)
-  #    assert_equal expected, actual
-  # end
+  #   Compact.verify_contract('role_name', myObject) do
+  #     expected = return_value
+  #     actual =  myObject.method_name(*args_specified_by_test_double)
+  #     assert_equal expected, actual
+  #   end
   #
   def self.verify_contract(name, collaborator, block = Proc.new )
     @@ledger.verify_contract(name, collaborator, block)

@@ -17,6 +17,7 @@ end
 Rake::RDocTask.new do |rdoc|
   files = ['README.md', 'LICENSE.txt', 'lib/']
   rdoc.rdoc_files.add(files)
+  rdoc.rdoc_dir = "doc"
   rdoc.main = "README.md" # page to start on
 end
 

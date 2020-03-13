@@ -1,5 +1,11 @@
 # COMPACT: COMPrehensive Automated Contract Testing
 
+
+>noun: __compact__
+>
+> *a formal agreement or contract between two or more parties.*
+
+_Because lots of the PACT - based names were taken_
 ## Motivation
 This library aims to help you combat the problem of drifting test doubles: 
 if you change the behaviour of a class upon which other classes depend, and 
@@ -107,6 +113,7 @@ end
 ```
 
 A contract can fail to be verified in three ways: 
+
 1. A missing contract test
 2. A verified method not being asserted by some test_double. 
 3. A mismatch in the behaviour of a double and real object intended to fulfill its role.

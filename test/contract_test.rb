@@ -33,8 +33,7 @@ class ContractTest < MiniTest::Test
     contract.verify(collaborator){|obj| obj.add(1,2) }
     refute contract.verified?
 
-    stub = TestHelpers::stubs_add_one_two
-    contract.watch(stub)
+    stub = contract.prepare_double{ TestHelpers::stubs_add_one_two }
     stub.add(1,2)
     assert contract.verified?
   end
@@ -68,8 +67,7 @@ class ContractTest < MiniTest::Test
     contract = Contract.new
     mock = contract.prepare_double do
       mock = Minitest::Mock.new
-      mock.expect(:add,3,[1,2])
-      mock
+      mock.expect(:add,3,[1,2]) # method returns the mock itself
     end
     assert_raises(MockExpectationError){ mock.verify }
 
@@ -97,41 +95,16 @@ class ContractTest < MiniTest::Test
   end
 
   # Error must be raised on method exit here; how to test this?
-  # def test_prepare_is_transparent_to_mocha_mocks
-  # # assert_raises(Exception) do
-  #     contract = Contract.new
-  #     mock = contract.prepare_double do
-  #       mock = mock('adder')
-  #       mock.expects(:add).with(1,2).returns(3)
-  #       mock
-  #     end
-  #   # end
-  # end
-
-  def test_watch_works_with_minitest_mocks
-    skip # Fails, but we might deprecate this method?
-    contract = Contract.new
-    mock = MiniTest::Mock.new
-    mock.expect(:add,3,[1,2])
-    contract.watch(mock)
-    mock.add(1,2)
-
-    collaborator = DumbObject.new
-    contract.verify(collaborator){|obj| obj.add(1,2)}
-    assert contract.verified?
+  def test_prepare_is_transparent_to_mocha_mocks
+    skip
+    assert_raises(Exception) do
+        contract = Contract.new
+        mock = contract.prepare_double do
+          mock = mock('adder')
+          mock.expects(:add).with(1,2).returns(3)
+          mock
+        end
+    end
   end
 
-  def test_watch_works_with_mocha_mocks
-    skip #passes, but we might deprecate this?
-    contract = Contract.new
-    mock = mock('adder')
-    mock.expects(:add).with(1,2).returns(3)
-    contract.watch(mock, [:add])
-
-    mock.add(1,2)
-
-    collaborator = DumbObject.new
-    contract.verify(collaborator){|obj| obj.add(1,2)}
-    assert contract.verified?
-  end
 end

@@ -10,23 +10,6 @@ module Compact
       @test_double_invocations = Set.new
     end
 
-    #[:nodoc]
-    def watch(test_double, methods_to_watch = [])
-      contract = self
-      original_verbosity = $VERBOSE
-      $VERBOSE = nil
-      instance_method_names = methods_to_watch.empty? ? test_double.methods - Object.new.methods : methods_to_watch
-      instance_method_names.each do |name|
-        real_method = test_double.method(name)
-        test_double.define_singleton_method(name) do |*args, &block|
-          return_value = real_method.call(*args, &block)
-          contract.add_invocation Invocation.new(method: name, args: args, returns: return_value)
-          return_value
-        end
-      end
-      $VERBOSE = original_verbosity
-    end
-
     def prepare_double(block = Proc.new)
       double = block.call
       interceptor = ArgumentInterceptor.new(double)

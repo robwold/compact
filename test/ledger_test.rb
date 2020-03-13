@@ -68,8 +68,8 @@ class LedgerTest < MiniTest::Test
 
   def ledger_with_contract
     ledger = Ledger.new
-    stub = TestHelpers.stubs_add_one_two
-    ledger.record_contract('adder', stub)
+    stub = ledger.prepare_double('adder'){ TestHelpers.stubs_add_one_two }
+    # ledger.record_contract('adder', stub)
     # in real usage stub would be injected as a dependency, and this would be
     # invoked in a collaboration test
     stub.add(1, 2)

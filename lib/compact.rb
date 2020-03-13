@@ -11,11 +11,6 @@ module Compact
       @ledger.prepare_double(name, block)
     end
 
-    # deprecate this?
-    def self.record_contract(name, test_double, methods_to_watch = [])
-      @ledger.record_contract(name, test_double, methods_to_watch)
-    end
-
     def self.verify_contract(name, collaborator, block = Proc.new )
       @ledger.verify_contract(name, collaborator, block)
     end
@@ -27,11 +22,6 @@ module Compact
 
   def self.prepare_double(name, block = Proc.new)
     LedgerWrapper.prepare_double(name, block)
-  end
-
-  # deprecate this
-  def self.record_contract(name, test_double, *methods_to_watch)
-    LedgerWrapper.record_contract(name, test_double, methods_to_watch)
   end
 
   def self.verify_contract(name, collaborator, block = Proc.new )

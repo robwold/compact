@@ -4,7 +4,8 @@ require_relative '../src/adder'
 require_relative '../src/multiplier'
 require_relative '../src/divider'
 
-$LOAD_PATH.unshift File.expand_path("../../lib", __dir__)
+# Used in development if you don't have the gem installed:
+# $LOAD_PATH.unshift File.expand_path("../../lib", __dir__)
 require "compact"
 
 #

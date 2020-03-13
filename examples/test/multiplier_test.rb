@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require_relative '../src/multiplier'
 require 'compact'
 
-class MultiplierTest < MiniTest::Unit::TestCase
+class MultiplierTest < MiniTest::Test
   # NO multiplication collaboration test!
   def test_multiplication_contract
     multiplier = Multiplier.new

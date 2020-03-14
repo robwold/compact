@@ -1,0 +1,37 @@
+# Ruby CircleCI 2.1 configuration file
+#
+# Check https://circleci.com/docs/2.0/ruby/ for more details
+#
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.3-stretch-node
+
+    steps:
+      - checkout
+      - run: # bump bundler version
+          name: install dependencies
+          command: |
+            gem update --system
+            gem install bundler
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
+
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
+          name: run tests
+          command: |
+            ./cc-test-reporter before-build
+            bundle exec rake
+            ./cc-test-reporter after-build -t simplecov
+

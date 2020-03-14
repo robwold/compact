@@ -31,6 +31,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "simplecov", "~>0.18"
+  # Keep an eye on https://github.com/codeclimate/test-reporter/issues/418
+  # to see if we can bump this
+  spec.add_development_dependency "simplecov", "0.17.1"
   spec.add_development_dependency "mocha", "~>1.11"
 end

@@ -1,11 +1,14 @@
 # COMPACT: COMPrehensive Automated Contract Testing
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/a98ce36af3c0b379b3c8/maintainability)](https://codeclimate.com/github/robwold/compact/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a98ce36af3c0b379b3c8/test_coverage)](https://codeclimate.com/github/robwold/compact/test_coverage)
 
 >noun: __compact__
 >
 > *a formal agreement or contract between two or more parties.*
 
 _Because lots of the PACT - based names were taken_
+
 ## Motivation
 This library aims to help you combat the problem of drifting test doubles: 
 if you change the behaviour of a class upon which other classes depend, and 

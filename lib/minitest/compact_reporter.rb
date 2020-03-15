@@ -1,4 +1,4 @@
-require_relative '../compact/ledger'
+require_relative '../compact'
 module Minitest
   class CompactReporter < AbstractReporter
 
